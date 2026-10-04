@@ -150,3 +150,24 @@ can be turned off with a variable. `terraform destroy` in the management root
 and then in the workload root removes everything. Regional delegation must be
 removed from the management account first, because a delegated administrator
 cannot delete its own GuardDuty detector or Security Hub.
+
+## Note on the CI jobs that talk to AWS
+
+Two workflow jobs assume AWS roles through GitHub OIDC: the smoke test in
+`plan.yml` (read-only `terraform plan`) and the weekly export in
+`evidence.yml`. They exist to demonstrate a pipeline with no stored AWS keys
+and automated evidence collection; the baseline itself does not depend on them
+and they are skipped until the repository is configured. To run them, set
+three repository variables with the values from `terraform output identity`
+and the deployment region:
+
+```bash
+gh variable set AWS_PLAN_ROLE_ARN     --body "<github_plan_role_arn>"
+gh variable set AWS_EVIDENCE_ROLE_ARN --body "<github_evidence_role_arn>"
+gh variable set AWS_REGION            --body "us-east-1"
+```
+
+Repository variables are not masked in workflow logs, so the role ARNs, and
+with them the account id, become visible in the public run output. If that
+matters, store the same values as repository secrets and change `vars.` to
+`secrets.` in the two workflow files; secrets are redacted from logs.
