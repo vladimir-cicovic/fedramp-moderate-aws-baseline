@@ -1,4 +1,9 @@
-"""Automated containment for high-severity GuardDuty findings (IR-4, IR-4(1), IR-6)."""
+"""Automated containment for high-severity GuardDuty findings (IR-4, IR-4(1), IR-6).
+
+AccessKey findings: deactivate the key and attach a deny-all policy to the user.
+Instance findings: snapshot the volumes, then move the instance to the quarantine group.
+Every action is reported to the alerts topic; DRY_RUN=true only reports.
+"""
 import json
 import logging
 import os
@@ -23,8 +28,10 @@ iam = boto3.client("iam")
 ec2 = boto3.client("ec2")
 sns = boto3.client("sns")
 
+
 def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
 
 def _tags(finding_id: str) -> list:
     return [
@@ -32,6 +39,7 @@ def _tags(finding_id: str) -> list:
         {"Key": "ContainmentFinding", "Value": finding_id},
         {"Key": "ContainmentTime", "Value": _now()},
     ]
+
 
 def contain_access_key(detail: dict, actions: list) -> None:
     key = detail["resource"].get("accessKeyDetails", {})
@@ -66,6 +74,7 @@ def contain_access_key(detail: dict, actions: list) -> None:
         iam.tag_user(UserName=user_name, Tags=_tags(detail["id"]))
     except ClientError as exc:
         actions.append(f"Could not tag user {user_name}: {exc.response['Error']['Code']}.")
+
 
 def contain_instance(detail: dict, actions: list) -> None:
     inst = detail["resource"].get("instanceDetails", {})
@@ -112,6 +121,7 @@ def contain_instance(detail: dict, actions: list) -> None:
         ec2.create_tags(Resources=[instance_id], Tags=_tags(detail["id"]))
     except ClientError as exc:
         actions.append(f"Could not tag instance {instance_id}: {exc.response['Error']['Code']}.")
+
 
 def handler(event: dict, _context) -> dict:
     detail = event.get("detail", {})
