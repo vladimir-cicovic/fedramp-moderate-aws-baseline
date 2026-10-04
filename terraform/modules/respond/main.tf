@@ -1,10 +1,16 @@
 # Automated containment of high-severity GuardDuty findings
 # (IR-4, IR-4(1), IR-4(4), IR-5, IR-6, AU-6(1), SI-4(5))
 
+# The source is zipped from normalized content so the hash does not change
+# with line endings.
 data "archive_file" "handler" {
   type        = "zip"
-  source_file = "${path.module}/src/handler.py"
   output_path = "${path.module}/.build/handler.zip"
+
+  source {
+    filename = "handler.py"
+    content  = replace(file("${path.module}/src/handler.py"), "\r", "")
+  }
 }
 
 # Execution role: only the containment actions, nothing else (AC-6)

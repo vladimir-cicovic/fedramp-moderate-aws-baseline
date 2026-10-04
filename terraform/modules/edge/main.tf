@@ -64,11 +64,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "origin" {
 }
 
 locals {
-  index_html = <<-HTML
+  # Line endings are normalized so the object does not change between Windows
+  # and Linux checkouts.
+  index_html = replace(<<-HTML
     <!doctype html>
     <html lang="en"><head><meta charset="utf-8"><title>${var.name_prefix}</title></head>
     <body><h1>${var.name_prefix}</h1><p>Static origin behind CloudFront, WAFv2 and origin access control.</p></body></html>
   HTML
+  , "\r", "")
 }
 
 resource "aws_s3_object" "index" {
