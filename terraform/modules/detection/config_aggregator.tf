@@ -37,6 +37,16 @@ resource "aws_iam_role_policy_attachment" "config_aggregator" {
   policy_arn = "arn:${var.partition}:iam::aws:policy/service-role/AWSConfigRoleForOrganizations"
 }
 
+# Same IAM propagation delay as the recorder role: wait before Config checks
+# PassRole.
+resource "time_sleep" "aggregator_role_propagation" {
+  count = var.enable_config_aggregator ? 1 : 0
+
+  create_duration = "20s"
+
+  depends_on = [aws_iam_role_policy_attachment.config_aggregator]
+}
+
 resource "aws_config_configuration_aggregator" "organization" {
   count = var.enable_config_aggregator ? 1 : 0
 
@@ -47,5 +57,5 @@ resource "aws_config_configuration_aggregator" "organization" {
     role_arn    = aws_iam_role.config_aggregator[0].arn
   }
 
-  depends_on = [aws_iam_role_policy_attachment.config_aggregator]
+  depends_on = [time_sleep.aggregator_role_propagation]
 }
