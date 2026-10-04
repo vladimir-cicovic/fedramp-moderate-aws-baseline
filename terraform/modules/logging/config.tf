@@ -69,6 +69,18 @@ resource "aws_iam_role_policy" "config_delivery" {
   policy = data.aws_iam_policy_document.config_delivery.json
 }
 
+# IAM is eventually consistent: a freshly created role is not always visible
+# to
+# Config's PassRole check within the same apply.
+resource "time_sleep" "config_role_propagation" {
+  create_duration = "20s"
+
+  depends_on = [
+    aws_iam_role_policy_attachment.config,
+    aws_iam_role_policy.config_delivery,
+  ]
+}
+
 resource "aws_config_configuration_recorder" "this" {
   name     = "default"
   role_arn = aws_iam_role.config.arn
@@ -77,6 +89,8 @@ resource "aws_config_configuration_recorder" "this" {
     all_supported                 = true
     include_global_resource_types = true
   }
+
+  depends_on = [time_sleep.config_role_propagation]
 }
 
 resource "aws_config_delivery_channel" "this" {
