@@ -1,0 +1,9 @@
+# Copy to terraform.tfvars (git-ignored). Values come from the main root's
+# outputs: terraform -chdir=.. output logging
+
+aws_profile         = "mgmt"
+region              = "us-east-1"
+use_fips_endpoints  = true
+trail_name          = "fedramp-baseline-lab-org-trail"
+log_bucket_name     = "fedramp-baseline-lab-cloudtrail-<account-id>-us-east-1"
+logging_kms_key_arn = "arn:aws:kms:us-east-1:<account-id>:key/<key-id>"

@@ -1,0 +1,59 @@
+name: conmon-evidence
+
+# Weekly continuous monitoring export (CA-7). Assumes the evidence role
+# through
+# OIDC, runs the read-only collector and the POA&M generator, and keeps the
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: conmon-evidence
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    name: collect evidence and POA&M
+    runs-on: ubuntu-latest
+    if: vars.AWS_EVIDENCE_ROLE_ARN != ''
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install boto3
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_EVIDENCE_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          role-session-name: conmon-${{ github.run_id }}
+
+      - name: Collect evidence
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+          AWS_USE_FIPS_ENDPOINT: "true"
+        run: python evidence/collect.py --region "$AWS_REGION"
+
+      - name: Generate POA&M
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+          AWS_USE_FIPS_ENDPOINT: "true"
+        run: python evidence/poam.py --region "$AWS_REGION"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: evidence-${{ github.run_id }}
+          path: evidence/output
+          retention-days: 90
+
+      - name: Summary
+        run: cat evidence/output/$(date -u +%Y-%m-%d)/summary.md >> "$GITHUB_STEP_SUMMARY"

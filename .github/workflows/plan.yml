@@ -1,0 +1,68 @@
+name: terraform-ci
+
+# Static checks run on every push and pull request. The OIDC smoke test proves
+# that GitHub Actions obtains short-lived AWS credentials with no stored keys
+# (IA-5(7), AC-6).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  static-analysis:
+    name: fmt / validate / checkov
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.*"
+
+      - name: terraform fmt
+        run: terraform fmt -check -recursive -diff
+        working-directory: terraform
+
+      - name: terraform init (no backend)
+        run: terraform init -backend=false -input=false
+        working-directory: terraform
+
+      - name: terraform validate
+        run: terraform validate
+        working-directory: terraform
+
+      - name: checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          config_file: .checkov.yaml
+          output_format: cli,sarif
+          output_file_path: console,checkov.sarif
+
+      - name: Upload checkov SARIF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-sarif
+          path: checkov.sarif
+
+  oidc-smoke-test:
+    name: assume AWS role via OIDC (no stored keys)
+    runs-on: ubuntu-latest
+    needs: static-analysis
+    if: vars.AWS_PLAN_ROLE_ARN != ''
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          role-session-name: github-${{ github.run_id }}
+
+      - name: Who am I
+        run: aws sts get-caller-identity

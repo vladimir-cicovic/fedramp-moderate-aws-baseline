@@ -1,0 +1,36 @@
+# Copy to terraform.tfvars and adjust. terraform.tfvars is git-ignored.
+
+region      = "us-east-1"
+project     = "fedramp-baseline"
+environment = "lab"
+
+# --- AWS Organizations -------------------------------------------------------
+# true  : this account becomes (or already is) the management account.
+# false : member account or no Organizations access. Org trail becomes an
+#         account trail and SCPs are skipped.
+enable_organizations = true
+
+# Set to false if the organization already exists (Terraform will read it
+# instead of creating it).
+create_organization = true
+
+# --- Identity Center ---------------------------------------------------------
+# Enable IAM Identity Center in the console first (one click), then flip this.
+enable_identity_center = false
+identity_center_region = "us-east-1"
+
+# GitHub repository trusted by the OIDC roles.
+github_org  = "vladimir-cicovic"
+github_repo = "fedramp-moderate-aws-baseline"
+
+# --- Logging -----------------------------------------------------------------
+# Lab values. Production: object_lock_mode = "COMPLIANCE", object_lock_days = 365.
+object_lock_mode    = "GOVERNANCE"
+object_lock_days    = 1
+log_expiration_days = 400
+
+# Receives CloudWatch alarm notifications (root usage, IAM changes, ...).
+# alert_email = "security@example.com"
+
+# --- KMS ---------------------------------------------------------------------
+kms_deletion_window_in_days = 7

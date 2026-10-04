@@ -1,0 +1,10 @@
+# Checkov configuration. Individual findings that are deliberate design
+# decisions are suppressed inline next to the resource with a justification
+# (grep for "checkov:skip"). Nothing is suppressed globally.
+directory:
+  - terraform
+framework:
+  - terraform
+download-external-modules: false
+compact: true
+quiet: true

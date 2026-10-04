@@ -1,0 +1,31 @@
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Local secrets and scratch
+.env
+*.pem
+*.key
+/tmp/
+
+# Lambda build artifacts
+**/.build/
+
+# Evidence exports contain account details; kept as workflow artifacts, not in git
+evidence/output/

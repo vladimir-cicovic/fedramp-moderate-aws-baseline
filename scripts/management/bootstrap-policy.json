@@ -1,0 +1,54 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadOrganization",
+      "Effect": "Allow",
+      "Action": [
+        "sts:GetCallerIdentity",
+        "organizations:DescribeOrganization",
+        "organizations:DescribeAccount",
+        "organizations:DescribePolicy",
+        "organizations:ListParents",
+        "organizations:ListAccountsForParent",
+        "organizations:ListPoliciesForTarget",
+        "organizations:ListAWSServiceAccessForOrganization",
+        "organizations:ListDelegatedAdministrators"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ManageServiceControlPolicies",
+      "Effect": "Allow",
+      "Action": [
+        "organizations:CreatePolicy",
+        "organizations:UpdatePolicy",
+        "organizations:AttachPolicy",
+        "organizations:DetachPolicy"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DelegateAdministration",
+      "Effect": "Allow",
+      "Action": [
+        "organizations:EnableAWSServiceAccess",
+        "organizations:RegisterDelegatedAdministrator",
+        "cloudtrail:RegisterOrganizationDelegatedAdmin",
+        "guardduty:ListOrganizationAdminAccounts",
+        "guardduty:EnableOrganizationAdminAccount",
+        "securityhub:ListOrganizationAdminAccounts",
+        "securityhub:EnableOrganizationAdminAccount",
+        "inspector2:GetDelegatedAdminAccount",
+        "inspector2:EnableDelegatedAdminAccount"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ServiceLinkedRolesCreatedByDelegation",
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "arn:aws:iam::*:role/aws-service-role/*"
+    }
+  ]
+}
