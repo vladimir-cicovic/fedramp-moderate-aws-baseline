@@ -14,4 +14,4 @@ Regenerate with `python scripts/inventory.py` after every apply; commit the resu
 
 | Resource | Type | Key attributes |
 |---|---|---|
-| `aws_cloudtrail.organization` | `aws_cloudtrail` | name=fedramp-baseline-lab-org-trail; is_multi_region_trail=true; is_organization_trail=true; enable_log_file_validation=true; kms_key_id=arn:aws:kms:us-east-1:111111111111:key/9a7db679-5bc6-435f-9b79-559ff1618f1d |
+| `aws_cloudtrail.organization` | `aws_cloudtrail` | name=fedramp-baseline-lab-org-trail; is_multi_region_trail=true; is_organization_trail=true; enable_log_file_validation=true; kms_key_id=arn:aws:kms:us-east-1:111111111111:key/7ca1ec9b-f147-4c03-a9fc-0313d8e1f749 |

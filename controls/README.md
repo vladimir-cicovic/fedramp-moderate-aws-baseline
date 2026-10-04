@@ -15,7 +15,7 @@ as evidence. This is the material that feeds the System Security Plan (SSP).
 
 | Responsibility | Meaning | Example |
 |---|---|---|
-| `inherited` | Fully satisfied by the AWS FedRAMP authorization (us-east/us-west, FedRAMP High) and leveraged as-is. Evidence is the AWS FedRAMP package via AWS Artifact. | PE-3 physical access, MP-6 media sanitisation, KMS HSM FIPS validation |
+| `inherited` | Fully satisfied by the AWS FedRAMP authorization (AWS US East/West at FedRAMP Moderate; AWS GovCloud (US) at FedRAMP High) and leveraged as-is. Evidence is the AWS FedRAMP package via AWS Artifact. | PE-3 physical access, MP-6 media sanitisation, KMS HSM FIPS validation |
 | `shared` | AWS provides the mechanism, the customer must configure and operate it. | AU-9: S3 Object Lock exists, we must enable it; SC-28: KMS exists, we must encrypt with it |
 | `customer` | Entirely the customer's implementation on top of AWS primitives. | AC-2 account lifecycle in Identity Center, IR-4 containment Lambda, runbooks |
 | `organizational` | Policy, procedure, training or personnel controls. Not implementable in Terraform; referenced so the matrix is complete. | AC-1 policy, AT-2 awareness training (KnowBe4), PS-3 screening |

@@ -3,6 +3,10 @@
 Terraform, documentation and evidence tooling for a SaaS company that must
 demonstrate FedRAMP Moderate Equivalency on commercial AWS.
 
+Every standard, regulation and vendor document this implementation follows,
+the official reference implementation that confirms each pattern, and the file
+in this repository that applies it are listed in [STANDARD.md](STANDARD.md).
+
 ## The problem
 
 A SaaS provider whose customers are U.S. defense contractors has to meet
@@ -33,10 +37,12 @@ Treat the baseline as code and the evidence as a build artifact.
   Milestones with the required 30/90/180 day deadlines.
 - High severity threats trigger automated containment, and the runbooks pick
   up where the automation stops.
+- Nothing in the code is invented: each policy, setting and procedure is traced
+  to the standard or AWS documentation it comes from in [STANDARD.md](STANDARD.md).
 
 ## What was built
 
-The code was applied to a real account: 175 resources in the workload account
+The code was applied to a real account: 177 resources in the workload account
 and one organization trail in the management account. `terraform plan` reports
 no drift and checkov passes with every exception justified inline.
 

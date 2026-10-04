@@ -114,7 +114,7 @@ flowchart TB
 
 | System | Relationship | Data exchanged | Protection | SSP treatment |
 |---|---|---|---|---|
-| AWS (regions us-east-1 / us-west-2, services listed above) | Leveraged authorization: AWS US East/West FedRAMP High (JAB) | n/a | Inherited physical, environmental, hypervisor, KMS HSM controls | Section "Leveraged Authorizations"; inherited rows in the control matrix |
+| AWS (regions us-east-1 / us-west-2, services listed above) | Leveraged authorization: AWS US East/West FedRAMP Moderate (GovCloud would be FedRAMP High) | n/a | Inherited physical, environmental, hypervisor, KMS HSM controls | Section "Leveraged Authorizations"; inherited rows in the control matrix |
 | GitHub (repository, Actions) | Interconnection | Infrastructure code (no secrets), OIDC tokens, read-only API responses, evidence files | OIDC federation with aud/sub conditions, read-only roles, branch-restricted evidence role | Interconnection Security Agreement; vendor SOC 2 review |
 | Corporate IdP (Okta / Entra ID) | Interconnection (production) | SAML assertions, SCIM user and group provisioning | SAML signing, SCIM bearer token, MFA at the IdP and in Identity Center | ISA; vendor FedRAMP authorization (Okta has one) |
 | Datadog SIEM | Interconnection (production) | Copies of CloudTrail, flow, WAF, application logs; alert webhooks | TLS, Datadog FedRAMP Moderate authorized instance (us1-fed), API key in Secrets Manager | ISA; leveraged authorization for the SIEM function |
